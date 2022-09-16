@@ -39,11 +39,14 @@ double freq[3];
 
 int cpu() {
   // make a random choice, weighted by our frequency values
-  int n = freq[0] * 1000 + freq[1] * 1000 + freq[2] * 1000;
+  int part_a = max(0, freq[0]) * 1000;
+  int part_b = max(0, freq[1]) * 1000;
+  int part_c = max(0, freq[2]) * 1000;
+  int n = part_a + part_b + part_c;
   int r = random(0, n);
-  if (r < freq[0] * 1000) {
+  if (r < part_a) {
     return 0;
-  } else if (r < freq[1] * 1000) {
+  } else if (r < part_a + part_b) {
     return 1;
   } else {
     return 2;
@@ -56,6 +59,11 @@ void loop() {
   Serial.print("Welcome to RPS! How many rounds would you like the game to be? ");
   int rounds = io.readInt();
   Serial.println(rounds);
+
+  // reset frequency table
+  for (int i = 0; i < 3; i++) {
+    freq[i] = 0.1;
+  }
 
   int cpu_wins = 0, p_wins = 0;
 
