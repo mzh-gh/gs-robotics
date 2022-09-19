@@ -39,8 +39,8 @@ int get_move(String s) {
 double freq[3];
 
 int cpu() {
-  // make a random choice, weighted by e^(frequency value) for each move
-  // multiply each value by 1000 to create large integer length ranges for r (required because n is an integer and will be between [0, 3) smaller than the sum of these 3)
+  // multiply each value by 1000 to create large ranges
+  // required because n has type int -> decimals at the end of this sum would be cut off -> third range much smaller than it's supposed to be
   int n = exp(freq[0]) * 1000 + exp(freq[1]) * 1000 + exp(freq[2]) * 1000;
   int r = random(0, n);
 
