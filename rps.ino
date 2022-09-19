@@ -34,21 +34,21 @@ int get_move(String s) {
 
 // https://daniel.lawrence.lu/programming/rps/
 // simple decaying frequency counter
+// it's not very strong < 20 games, but beyond that it can beat people pretty consistently
 
 double freq[3];
 
 int cpu() {
-  // make a random choice, weighted by our frequency values
-  int part_a = max(0, freq[0]) * 1000;
-  int part_b = max(0, freq[1]) * 1000;
-  int part_c = max(0, freq[2]) * 1000;
-  int n = part_a + part_b + part_c;
+  // make a random choice, weighted by e^(frequency value) for each move
+  // multiply each value by 1000 to create large integer length ranges for r (required because n is an integer and will be between [0, 3) smaller than the sum of these 3)
+  int n = exp(freq[0]) * 1000 + exp(freq[1]) * 1000 + exp(freq[2]) * 1000;
   int r = random(0, n);
-  if (r < part_a) {
+
+  if (r < exp(freq[0]) * 1000) { // lies in the first range
     return 0;
-  } else if (r < part_a + part_b) {
+  } else if (r < exp(freq[0]) * 1000 + exp(freq[1]) * 1000) { // lies in the second range
     return 1;
-  } else {
+  } else { // lies in the third range
     return 2;
   }
 }
@@ -56,15 +56,17 @@ int cpu() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  Serial.print("Welcome to RPS! How many rounds would you like the game to be? ");
+  Serial.print("Welcome to RPS! How many rounds would you like the game to be (50+ recommended)? ");
   int rounds = io.readInt();
   Serial.println(rounds);
 
-  // reset frequency table
+  // reset the frequency table
+  // assign a small starting value to ensure the bot doesn't "jump to conclusions" too quickly
   for (int i = 0; i < 3; i++) {
-    freq[i] = 0.1;
+    freq[i] = 0.3;
   }
 
+  // keep track of cpu and player wins
   int cpu_wins = 0, p_wins = 0;
 
   for (int i = 0; i < rounds; i++) {
@@ -72,13 +74,15 @@ void loop() {
     Serial.print("Enter your move; rock, paper, or scissors (r/p/s)? ");
     String in = io.readString();
     while (get_move(in) == -1) {
-      Serial.println("\nThat's not a valid move... Input rock, paper, or scissors (r/p/s). ");
+      Serial.print("\nThat's not a valid move... Input rock, paper, or scissors (r/p/s): ");
       in = io.readString();
     }
     Serial.println(in);
 
+    // get cpu and player move
     int cpu_mv = cpu(), p_mv = get_move(in);
 
+     // match result (stored in lookup table)
     int res = game[cpu_mv][p_mv];
 
     Serial.print("The computer played " + names[cpu_mv] + ". ");
@@ -92,7 +96,7 @@ void loop() {
       Serial.println("It was a tie.");
     }
 
-    // decay
+    // decay frequency values
     for (int i = 0; i < 3; i++) {
       freq[i] *= 0.95;
     }
@@ -102,7 +106,7 @@ void loop() {
     freq[(p_mv + 2) % 3] += 0.1;
   }
 
-  Serial.println("\nFINAL SCORE:");
+  Serial.println("\nFINAL SCORE:"); 
   Serial.println("CPU: " + String(cpu_wins));
   Serial.println("PLAYER: " + String(p_wins));
 
