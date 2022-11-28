@@ -5,7 +5,7 @@ This repo contains some school projects from my robotics class. They're generall
 Pinecone is a "rock-paper-scissors engine": it analyzes your moves and can beat human players pretty consistently. Read the comments in pinecone.ino for more info.
 
 ## Tetris
-This is a clone of Tetris (NES).
+This is a clone of Tetris (NES). Uses a small TFT display and a thumbstick.
 
 ## Wordle
-This is a rudimentary clone of Wordle.
+This is a rudimentary clone of Wordle. You can interact with it in the serial monitor when running on an Arduino.
