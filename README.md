@@ -1,4 +1,4 @@
-# GS-Robotics
+# gs-robotics
 This repo contains some school projects from my robotics class. They're generally pretty small and only took a few hours of time to make, so I decided to put them all in one repository.
 
 ## Pinecone
